@@ -10,22 +10,34 @@ import { ActivatedRoute } from '@angular/router';
   ]
 })
 export class ArtistComponent {
-  id: string;
-  artist: any;
-  constructor( private spotify: SpotifyService,
-               private router : ActivatedRoute) { 
+  loading: boolean;
+  artist:any = {};
+  topTracks: any[] = [];
+  constructor(private spotify: SpotifyService,
+    private router: ActivatedRoute) {
 
-    this.router.params.subscribe( params =>{
-       this.id = ( params['id'] );
+    this.router.params.subscribe(params => {
+      this.getArtist(params['id']);
+      this.getTopTracks(params['id']);
     })
-    this.spotify.getRelatedArtist( this.id )
-     .subscribe( data => {
-       console.log(data['name'])
-      this.artist =  data ;
-       return this.artist;
-     })
-    
   }
 
+  getArtist(id: string) {
+    this.loading = true;
+    this.spotify.getRelatedArtist(id)
+      .subscribe( artist => {
+        this.loading= false;
+        console.log(artist)
+        this.artist = artist;
+      })
+  }
+
+  getTopTracks( id: string ){
+    this.spotify.getTopTracks(id)
+      .subscribe( topTracks =>{
+        console.log( topTracks )
+        this.topTracks= topTracks;
+      })
+  }
 }
-// 6P5NO5hzJbuOqSdyPB7SJM 4VMYDCV2IEDYJArk749S6m
+// 6P5NO5hzJbuOqSdyPB7SJM
